@@ -19,6 +19,7 @@ const typeDefs = gql`
     type Benchmark {
         id: ID!
         system: System!
+        ram_bandwidth: int
     }
 
     type Query {
