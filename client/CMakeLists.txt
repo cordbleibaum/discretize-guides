@@ -19,6 +19,7 @@ find_package(OpenMP REQUIRED)
 # benchfactor-2021
 add_executable(${PROJECT_NAME} 
     application/main.cpp
+    benchmarks/ram_stream.cpp
 )
 
 if(MSVC)

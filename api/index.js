@@ -2,16 +2,24 @@ const { ApolloServer, gql } = require('apollo-server');
 
 const typeDefs = gql`
     type System {
-        id: String
+        id: ID!
+        parts: [Part]!
+    }
+
+    type Part {
+        id: ID!
+        name: String
+        number: String
+        image: String
     }
 
     type Benchmark {
-        id: String
-        system: System
+        id: ID!
+        system: System!
     }
 
     type Query {
-        benchmarks: [Benchmark]
+        benchmark(id: ID!): [Benchmark]
     }
 `;
 
