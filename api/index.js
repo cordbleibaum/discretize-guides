@@ -1,5 +1,6 @@
 const { ApolloServer, gql } = require('apollo-server');
 const MongoClient = require('mongodb').MongoClient;
+const amqp = require('amqplib');
 const assert = require('assert');
 
 const typeDefs = gql`
@@ -25,11 +26,14 @@ const typeDefs = gql`
     }
 `;
 
-const db_client = new MongoClient('mongodb://database:27017/');
-db_client.connect(function (err) {
-    assert.strictEqual(null, err);
-    console.log('Connected successfully to database server');
-    const db = db_client.db('benchfactor');
+(async () => {
+    const mongo_client = await MongoClient.connect('mongodb://database:27017/');
+    const db = mongo_client.db('benchfactor');
+    console.log('Connected to MongoDB');
+
+    const ampq_connection = await amqp.connect('amqp://messagequeue/');
+    const channel = await ampq_connection.createChannel();
+    console.log('Connected to AMPQ');
 
     const resolvers = {
         Query: {
@@ -43,4 +47,4 @@ db_client.connect(function (err) {
     }).then(({ url }) => {
         console.log(`🚀  Server ready at ${url}`);
     });
-});
+})();
