@@ -1,6 +1,7 @@
 FROM tensorflow/tensorflow:latest
 
 COPY requirements.txt /tmp/
+RUN pip install -r /tmp/requirements.txt
 
 RUN useradd --create-home appuser
 WORKDIR /home/appuser

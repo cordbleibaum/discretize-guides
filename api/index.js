@@ -25,7 +25,7 @@ const typeDefs = gql`
 
 const resolvers = {
     Query: {
-        benchmarks: () => [],
+        benchmark: (id) => {},
     },
 };
 

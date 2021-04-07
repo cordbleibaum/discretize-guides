@@ -35,8 +35,10 @@ services:
             - frontend
         links:
             - "mongo:database"
+            - "rabbitmq:messagequeue"
         depends_on:
             - mongo
+            - rabbitmq
 
     worker:
         build: worker
@@ -46,8 +48,10 @@ services:
             - backend
         links:
             - "mongo:database"
+            - "rabbitmq:messagequeue"
         depends_on:
             - mongo
+            - rabbitmq
 
 networks:
     backend:
