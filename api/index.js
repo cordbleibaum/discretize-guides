@@ -1,4 +1,6 @@
 const { ApolloServer, gql } = require('apollo-server');
+const MongoClient = require('mongodb').MongoClient;
+const assert = require('assert');
 
 const typeDefs = gql`
     type System {
@@ -23,16 +25,22 @@ const typeDefs = gql`
     }
 `;
 
-const resolvers = {
-    Query: {
-        benchmark: (id) => {},
-    },
-};
+const db_client = new MongoClient('mongodb://database:27017/');
+db_client.connect(function (err) {
+    assert.strictEqual(null, err);
+    console.log('Connected successfully to database server');
+    const db = db_client.db('benchfactor');
 
-const server = new ApolloServer({ typeDefs, resolvers });
+    const resolvers = {
+        Query: {
+            benchmark: (id) => { },
+        },
+    };
 
-server.listen({
-    port: 4000,
-}).then(({ url }) => {
-    console.log(`🚀  Server ready at ${url}`);
+    const server = new ApolloServer({ typeDefs, resolvers });
+    server.listen({
+        port: 4000,
+    }).then(({ url }) => {
+        console.log(`🚀  Server ready at ${url}`);
+    });
 });
