@@ -16,6 +16,12 @@ add_subdirectory(glad)
 # openmp
 find_package(OpenMP REQUIRED)
 
+# curl
+set(CURL_INCLUDE_DIR "C:\\Libraries\\curl\\include")
+set(CURL_LIBRARY "C:\\Libraries\\curl\\build\\Win64\\VC15\\LIB Release\\libcurl.lib")
+find_package(CURL REQUIRED)
+include_directories(${CURL_INCLUDE_DIR})
+
 # benchfactor-2021
 add_executable(${PROJECT_NAME} 
     application/main.cpp
@@ -26,4 +32,4 @@ if(MSVC)
     target_compile_options(${PROJECT_NAME} PRIVATE /arch:AVX2 /openmp)
 endif()
 
-target_link_libraries(${PROJECT_NAME} PRIVATE glfw glad OpenMP::OpenMP_CXX)
+target_link_libraries(${PROJECT_NAME} PRIVATE glfw glad OpenMP::OpenMP_CXX ${CURL_LIBRARY} ws2_32 Crypt32.lib Wldap32 Normaliz)
