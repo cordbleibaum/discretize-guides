@@ -3,17 +3,22 @@ version: '3'
 services:
     rabbitmq:
         image: rabbitmq:3
+        expose:
+            - 5672
+            - 15672       
         ports:
             - 5672:5672
             - 15672:15672
         volumes:
             - rabbitmq-data:/var/lib/rabbitmq/
-            - rabbitmq-logs:/var/log/rabbitmq
+            - rabbitmq-logs:/var/log/rabbitmq/
         networks:
             - backend
 
     mongo:
         image: mongo
+        expose:
+            - 27017
         ports:
             - 27017:27017
         volumes:
@@ -28,11 +33,21 @@ services:
         networks:
             - backend
             - frontend
+        links:
+            - "mongo:database"
+        depends_on:
+            - mongo
 
     worker:
         build: worker
+        ports:
+            - 5678:5678
         networks: 
             - backend
+        links:
+            - "mongo:database"
+        depends_on:
+            - mongo
 
 networks:
     backend:
