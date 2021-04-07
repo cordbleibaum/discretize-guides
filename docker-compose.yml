@@ -18,14 +18,26 @@ services:
             - 27017:27017
         volumes:
             - mongodb-data:/data/db
+        networks:
+            - backend
 
     api:
         build: api
         ports: 
             - 4000:4000
+        networks:
+            - backend
+            - frontend
+
+    worker:
+        build: worker
+        networks: 
+            - backend
 
 networks:
     backend:
+        driver: bridge
+    frontend:
         driver: bridge
 
 volumes:

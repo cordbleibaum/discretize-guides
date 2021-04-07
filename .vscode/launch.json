@@ -2,7 +2,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch",
+            "name": "Launch client",
             "type": "cppvsdbg",
             "request": "launch",
             // Resolved by CMake Tools:

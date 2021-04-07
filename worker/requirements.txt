@@ -1,0 +1,7 @@
+pymongo
+tensorflow
+schedule
+pandas
+numpy
+ptvsd
+pika
