@@ -4,24 +4,6 @@ project(benchfactor-2021)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# glfw
-set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
-set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
-set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
-add_subdirectory(glfw)
-
-# glad
-add_subdirectory(glad)
-
-# openmp
-find_package(OpenMP REQUIRED)
-
-# curl
-set(CURL_INCLUDE_DIR "C:\\Libraries\\curl\\include")
-set(CURL_LIBRARY "C:\\Libraries\\curl\\build\\Win64\\VC15\\LIB Release\\libcurl.lib")
-find_package(CURL REQUIRED)
-include_directories(${CURL_INCLUDE_DIR})
-
 # benchfactor-2021
 add_executable(${PROJECT_NAME} 
     application/main.cpp
@@ -32,4 +14,22 @@ if(MSVC)
     target_compile_options(${PROJECT_NAME} PRIVATE /arch:AVX2 /openmp)
 endif()
 
-target_link_libraries(${PROJECT_NAME} PRIVATE glfw glad OpenMP::OpenMP_CXX ${CURL_LIBRARY} ws2_32 Crypt32.lib Wldap32 Normaliz)
+# json
+find_package(nlohmann_json CONFIG REQUIRED)
+target_link_libraries(${PROJECT_NAME} PRIVATE nlohmann_json nlohmann_json::nlohmann_json)
+
+# glad
+find_package(glad CONFIG REQUIRED)
+target_link_libraries(${PROJECT_NAME} PRIVATE glad::glad)
+
+# glfw
+find_package(glfw3 CONFIG REQUIRED)
+target_link_libraries(${PROJECT_NAME} PRIVATE glfw)
+
+# curl
+find_package(CURL CONFIG REQUIRED)
+target_link_libraries(${PROJECT_NAME} PRIVATE CURL::libcurl)
+
+# openmp
+find_package(OpenMP REQUIRED)
+target_link_libraries(${PROJECT_NAME} PRIVATE OpenMP::OpenMP_CXX)
