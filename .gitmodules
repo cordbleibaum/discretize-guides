@@ -1,3 +1,6 @@
 [submodule "client/glfw"]
 	path = client/glfw
 	url = git@github.com:glfw/glfw.git
+[submodule "client/json"]
+	path = client/json
+	url = git@github.com:nlohmann/json.git
