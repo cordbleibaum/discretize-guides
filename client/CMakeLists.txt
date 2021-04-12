@@ -33,3 +33,6 @@ target_link_libraries(${PROJECT_NAME} PRIVATE CURL::libcurl)
 # openmp
 find_package(OpenMP REQUIRED)
 target_link_libraries(${PROJECT_NAME} PRIVATE OpenMP::OpenMP_CXX)
+
+# wmi
+target_link_libraries(${PROJECT_NAME} PRIVATE wbemuuid)
