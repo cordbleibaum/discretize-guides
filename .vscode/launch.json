@@ -28,7 +28,7 @@
                     "value": "Something something"
                 }
             ],
-            "externalConsole": true
+            "console": "integratedTerminal"
         }
     ]
 }

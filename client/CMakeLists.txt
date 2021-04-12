@@ -36,3 +36,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE OpenMP::OpenMP_CXX)
 
 # wmi
 target_link_libraries(${PROJECT_NAME} PRIVATE wbemuuid)
+
+# Boost
+find_package(Boost REQUIRED COMPONENTS)
+target_link_libraries(${PROJECT_NAME} PRIVATE Boost::boost)
