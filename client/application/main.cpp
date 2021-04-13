@@ -32,7 +32,7 @@ json graphql_call(std::string_view host, const std::string_view target, int port
         tcp::resolver resolver(io_context);
         beast::tcp_stream stream(io_context);
 
-        auto const dns_results = resolver.resolve(host, std::to_string(port));
+        const auto dns_results = resolver.resolve(host, std::to_string(port));
         stream.connect(dns_results);
 
         std::string body = "{\"query\" : \"" + data + "\"}";
@@ -83,7 +83,7 @@ std::string get_system_id() {
     return system_id;
 }
 
-void save_system_id(std::string system_id) {
+void save_system_id(const std::string_view system_id) {
     pt::ptree tree;
     tree.add("system_id", system_id);
     pt::write_json(settings_filename, tree);
