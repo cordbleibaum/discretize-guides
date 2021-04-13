@@ -99,8 +99,6 @@ int main() {
         results[name] = function();
     }
 
-    std::cout << results.dump(4);
-
     const std::string system_id = get_system_id();
 
     // TODO
