@@ -9,36 +9,52 @@
 #include <nlohmann/json.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
+#include <boost/beast/core.hpp>
+#include <boost/beast/http.hpp>
+#include <boost/beast/version.hpp>
+#include <boost/asio/connect.hpp>
+#include <boost/asio/ip/tcp.hpp>
 
 #include "../benchmarks/ram.h"
 
 using json = nlohmann::json;
 namespace pt = boost::property_tree;
+namespace beast = boost::beast;     // from <boost/beast.hpp>
+namespace http = beast::http;       // from <boost/beast/http.hpp>
+namespace net = boost::asio;        // from <boost/asio.hpp>
+using tcp = net::ip::tcp;           // from <boost/asio/ip/tcp.hpp>
 
 const std::string settings_filename = "settings.json";
 
-std::string graphql_call(std::string server, std::string data) {
-    CURL *curl = curl_easy_init();
-    if (curl) {
-        std::string returnBuffer;
+json graphql_call(std::string host, std::string target, int port, std::string data) {
+    try {
+        net::io_context io_context;
+        tcp::resolver resolver(io_context);
+        beast::tcp_stream stream(io_context);
 
-        struct curl_slist *headers=NULL;
-        headers = curl_slist_append(headers, "charsets: utf-8");
-        headers = curl_slist_append(headers, "Content-Type: application/json");
-        headers = curl_slist_append(headers, "Accept: application/json");
-        curl_easy_setopt(curl, CURLOPT_URL, server);
-        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, "{\"query\" : \"" + data + "\"}");
-        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, [](char *contents, size_t size, size_t nmemb, void *userp) {
-            ((std::string*)userp)->append((char*)contents, size * nmemb);
-            return size * nmemb;
-        });
-        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &returnBuffer);
-        curl_easy_perform(curl);
+        auto const dns_results = resolver.resolve(host, std::to_string(port));
+        stream.connect(dns_results);
 
-        std::cout << returnBuffer << "test" << std::endl;
+        std::string body = "{\"query\" : \"" + data + "\"}";
 
-        curl_easy_cleanup(curl);
+        http::request<http::string_body> request{http::verb::post, target, 11};
+        request.set(http::field::host, host);
+        request.set(http::field::user_agent, BOOST_BEAST_VERSION_STRING);
+        request.set(http::field::content_type, "application/json");
+        request.set(http::field::content_length, std::to_string(body.length()));
+        request.body() = body;
+        http::write(stream, request);
+
+        beast::flat_buffer buffer;
+        http::response<http::string_body> response;
+        http::read(stream, buffer, response);
+
+        beast::error_code ec;
+        stream.socket().shutdown(tcp::socket::shutdown_both, ec);
+
+        return json::parse(response.body());
+    }  catch(std::exception const& e) {
+        std::cerr << "Error: " << e.what() << std::endl;
     }
     return "";
 }
@@ -49,17 +65,19 @@ std::string get_system_id() {
     if (std::filesystem::exists(settings_filename)) {
         pt::ptree tree;
         pt::read_json(settings_filename, tree);
-        system_id = tree.get<std::string>(settings_filename, "");
+        system_id = tree.get<std::string>("system_id", "");
     }
 
     if (system_id == "") {
-        graphql_call("localhost:4000", "\
+        auto result = graphql_call("localhost", "/", 4000, "\
             mutation addSystem {\
                 createSystemID{\
                     id\
                 }\
             }\
         ");
+        system_id = result["data"]["createSystemID"]["id"];
+        std::cout << "Created ID: " << system_id << std::endl;
     }
 
     return system_id;
