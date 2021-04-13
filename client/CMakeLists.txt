@@ -26,10 +26,6 @@ target_link_libraries(${PROJECT_NAME} PRIVATE glad::glad)
 find_package(glfw3 CONFIG REQUIRED)
 target_link_libraries(${PROJECT_NAME} PRIVATE glfw)
 
-# curl
-find_package(CURL CONFIG REQUIRED)
-target_link_libraries(${PROJECT_NAME} PRIVATE CURL::libcurl)
-
 # openmp
 find_package(OpenMP REQUIRED)
 target_link_libraries(${PROJECT_NAME} PRIVATE OpenMP::OpenMP_CXX)
