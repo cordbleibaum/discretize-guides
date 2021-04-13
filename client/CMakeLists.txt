@@ -36,3 +36,4 @@ target_link_libraries(${PROJECT_NAME} PRIVATE wbemuuid)
 # Boost
 find_package(Boost REQUIRED COMPONENTS)
 target_link_libraries(${PROJECT_NAME} PRIVATE Boost::boost)
+target_compile_definitions(${PROJECT_NAME} PRIVATE BOOST_BEAST_USE_STD_STRING_VIEW)

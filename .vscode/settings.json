@@ -94,5 +94,9 @@
         "xutility": "cpp",
         "*.inc": "cpp",
         "filesystem": "cpp"
-    }
+    },
+    "C_Cpp.default.defines": [
+        "BOOST_BEAST_USE_STD_STRING_VIEW"
+    ],
+    "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools"
 }

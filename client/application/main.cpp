@@ -26,7 +26,7 @@ using tcp = net::ip::tcp;           // from <boost/asio/ip/tcp.hpp>
 
 const std::string settings_filename = "settings.json";
 
-json graphql_call(const std::string& host, const std::string& target, int port, const std::string& data) {
+json graphql_call(std::string_view host, const std::string_view target, int port, const std::string& data) {
     try {
         net::io_context io_context;
         tcp::resolver resolver(io_context);
