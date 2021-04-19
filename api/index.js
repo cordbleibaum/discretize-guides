@@ -111,11 +111,11 @@ const typeDefs = gql`
 
     type Mutation {
         createSystemID: System
-        setCPU(system: ID, cpu: CPUInput): CPU
         setMainboard(system: ID, mainboard: MainboardInput): Mainboard
-        setDrive(system: ID, drive: DriveInput): Drive
-        setRAM(system: ID, ram: RAMInput): RAM
-        setGPU(system: ID, gpu: GPUInput): GPU
+        setCPUs(system: ID, cpus: [CPUInput]): [CPU]
+        setDrives(system: ID, drives: [DriveInput]): [Drive]
+        setRAMs(system: ID, rams: [RAMInput]): [RAM]
+        setGPUs(system: ID, gpus: [GPUInput]): [GPU]
     }
 `;
 
@@ -143,24 +143,25 @@ const typeDefs = gql`
             }
         },
         Mutation: {
+            // TODO maintain change log
             createSystemID: async () => {
                 let emptySystem = {}
                 const result = await db.collection('systems').insertOne(emptySystem);
                 return { "id": result.insertedId};
             },
-            setCPU: async  (_, { system, cpu }, context) => {
+            setCPUs: async  (_, { system, cpus }, context) => {
                 await db.collection('systems').updateOne({
                     _id: ObjectId(system)
                 }, {
-                    $addToSet: {
+                    $set: {
                         cpus: cpu
                     }
                 }, {
                     upsert: true
                 })
-                return cpu;
+                return cpus;
             },
-            setDrive: async  (_, { system, drive }, context) => {
+            setDrives: async  (_, { system, drives }, context) => {
                 await db.collection('systems').updateOne({
                     _id: ObjectId(system)
                 }, {
@@ -170,31 +171,31 @@ const typeDefs = gql`
                 }, {
                     upsert: true
                 })
-                return drive;
+                return drives;
             },
-            setRAM: async  (_, { system, ram }, context) => {
+            setRAMs: async  (_, { system, rams }, context) => {
                 await db.collection('systems').updateOne({
                     _id: ObjectId(system)
                 }, {
-                    $addToSet: {
-                        rams: ram
+                    $set: {
+                        rams: rams
                     }
                 }, {
                     upsert: true
                 })
-                return ram;
+                return rams;
             },
-            setGPU: async  (_, { system, gpu }, context) => {
+            setGPUs: async  (_, { system, gpus }, context) => {
                 await db.collection('systems').updateOne({
                     _id: ObjectId(system)
                 }, {
-                    $addToSet: {
-                        gpus: gpu
+                    $set: {
+                        gpus: gpus
                     }
                 }, {
                     upsert: true
                 })
-                return gpu;
+                return gpus;
             },
             setMainboard: async  (_, { system, mainboard }, context) => {
                 await db.collection('systems').updateOne({
