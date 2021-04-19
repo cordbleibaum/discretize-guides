@@ -66,6 +66,8 @@ std::string get_system_id() {
         pt::ptree tree;
         pt::read_json(settings_filename, tree);
         system_id = tree.get<std::string>("system_id", "");
+
+        // TODO: check if ID is still up to date
     }
 
     if (system_id == "") {
@@ -100,8 +102,6 @@ int main() {
     }
 
     const std::string system_id = get_system_id();
-
-    // TODO
 
     save_system_id(system_id);
     return EXIT_SUCCESS;
